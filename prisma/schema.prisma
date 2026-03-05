@@ -8,13 +8,28 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  email          String   @unique
-  password       String
-  name           String
-  salaryMonthly  Float?
-  currentSavings Float?
-  targetAmount   Float    @default(1000000000)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password        String
+  username        String
+  phoneNumber     String   @unique
+  avatar          String?
+  role            String   @default("user")
+  isActive        Boolean  @default(true)
+  isSubscription  Boolean @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  refreshTokens   RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  isRevoked Boolean  @default(false)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
