@@ -4,9 +4,11 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "salaryMonthly" DOUBLE PRECISION,
-    "currentSavings" DOUBLE PRECISION,
-    "targetAmount" DOUBLE PRECISION NOT NULL DEFAULT 1000000000,
+    "phoneNumber" TEXT NOT NULL,
+    "avatar" TEXT,
+    "role" TEXT NOT NULL DEFAULT 'user',
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isSubscription" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -15,3 +17,6 @@ CREATE TABLE "User" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
