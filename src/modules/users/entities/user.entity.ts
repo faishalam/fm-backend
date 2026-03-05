@@ -3,10 +3,12 @@ import { Exclude } from 'class-transformer';
 export class UserEntity {
   id: string;
   email: string;
-  name: string;
-  salaryMonthly: number | null;
-  currentSavings: number | null;
-  targetAmount: number;
+  username: string;
+  phoneNumber: string;
+  avatar: string | null;
+  role: string;
+  isActive: boolean;
+  isSubscription: boolean;
   createdAt: Date;
   updatedAt: Date;
 

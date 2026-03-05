@@ -5,7 +5,7 @@ export class RegisterDto {
   email: string;
 
   @IsNotEmpty()
-  name: string;
+  username: string;
 
   @Matches(/^08[0-9]{8,12}$/, {
     message: 'Phone number must be a valid Indonesian number',

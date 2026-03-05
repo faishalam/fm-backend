@@ -5,8 +5,8 @@ POST   /auth/refresh-token
 POST   /auth/logout
 POST   /auth/logout-all
 POST   /auth/change-password
-POST   /auth/forgot-password
-POST   /auth/reset-password
+POST   /auth/forgot-password => mvp 2
+POST   /auth/reset-password => mpv 2
 
 USER 
 GET     /users                 (admin)
