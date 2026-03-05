@@ -1,12 +1,17 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsOptional, IsNotEmpty, Matches } from 'class-validator';
 
-export class CreateUserDto {
-  @IsEmail()
-  email: string;
-
-  @MinLength(6)
-  password: string;
-
+export class UpdateUserDto {
+  @IsOptional()
   @IsNotEmpty()
-  name: string;
+  username?: string;
+
+  @IsOptional()
+  @Matches(/^08[0-9]{8,12}$/, {
+    message: 'Phone number must be a valid Indonesian number',
+  })
+  phoneNumber?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  avatar?: string;
 }

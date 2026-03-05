@@ -10,10 +10,9 @@ POST   /auth/reset-password => mpv 2
 
 USER 
 GET     /users                 (admin)
-GET     /users/summary         (admin)
-GET     /users/me
 GET     /users/:id             (admin)
-GET     /users/me
-PATCH   /users/me/photo
-PATCH   /users/:id             (admin)
 DELETE  /users/:id             (admin)
+GET     /users/profile 
+PATCH   /users/me/photo
+PATCH   /users/:id             
+GET     /users/summary         (admin) => mvp 2
