@@ -20,7 +20,8 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  refreshTokens   RefreshToken[]
+  refreshTokens    RefreshToken[]
+  financialProfile  FinancialProfile?
 }
 
 model RefreshToken {
@@ -32,4 +33,16 @@ model RefreshToken {
 
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model FinancialProfile {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id])
+  salaryMonthly  Decimal?
+  currentSavings Decimal?
+  targetAmount   Decimal?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

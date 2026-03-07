@@ -7,13 +7,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private readonly includeProfile = { financialProfile: true };
+
   async findAll() {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      include: this.includeProfile,
+    });
     return users.map((user) => new UserEntity(user));
   }
 
   async getProfile(userId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: this.includeProfile,
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -23,7 +30,10 @@ export class UsersService {
   }
 
   async findUserById(userId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: this.includeProfile,
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -33,7 +43,10 @@ export class UsersService {
   }
 
   async deleteUser(userId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: this.includeProfile,
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -46,7 +59,10 @@ export class UsersService {
   }
 
   async updateUser(userId: string, updateUserDto: UpdateUserDto) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: this.includeProfile,
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -55,6 +71,7 @@ export class UsersService {
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: updateUserDto,
+      include: this.includeProfile,
     });
 
     return new UserEntity(updatedUser);

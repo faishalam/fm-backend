@@ -59,6 +59,10 @@ export class AuthService {
       data: { email, username, phoneNumber, password: hashedPassword },
     });
 
+    await this.prisma.financialProfile.create({
+      data: { userId: user.id },
+    });
+
     return new UserEntity(user);
   }
 

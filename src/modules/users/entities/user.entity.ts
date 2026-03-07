@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { FinancialProfileEntity } from '../../financial-profiles/entities/financial-profile.entitiy';
 
 export class UserEntity {
   id: string;
@@ -15,7 +16,14 @@ export class UserEntity {
   @Exclude()
   password: string;
 
-  constructor(partial: Partial<UserEntity>) {
+  financialProfile?: FinancialProfileEntity | null;
+
+  constructor(partial: Record<string, unknown>) {
     Object.assign(this, partial);
+    if (partial.financialProfile) {
+      this.financialProfile = new FinancialProfileEntity(
+        partial.financialProfile as Record<string, unknown>,
+      );
+    }
   }
 }

@@ -16,3 +16,8 @@ GET     /users/profile
 PATCH   /users/me/photo
 PATCH   /users/:id             
 GET     /users/summary         (admin) => mvp 2
+
+FINANCIAL-PROFILES
+POST    /financial-profiles
+GET     /financial-profiles/me
+PUT     /financial-profiles
