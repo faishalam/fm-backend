@@ -12,27 +12,35 @@ model User {
   email           String   @unique
   password        String
   username        String
-  phoneNumber     String   @unique
+  phoneNumber     String?  @unique
   avatar          String?
   role            String   @default("user")
   isActive        Boolean  @default(true)
-  isSubscription  Boolean @default(true)
+  deletedAt       DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   refreshTokens    RefreshToken[]
-  financialProfile  FinancialProfile?
+  financialProfile FinancialProfile?
+  categories       Category[]
+  transactions     Transaction[]
+  subscription     Subscription?
+  payments         Payment[]
 }
 
 model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  isRevoked Boolean  @default(false)
+  id         String   @id @default(uuid())
+  tokenHash  String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  deviceId   String?
+  deviceName String?
+  isRevoked  Boolean  @default(false)
 
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
 }
 
 model FinancialProfile {
@@ -40,9 +48,202 @@ model FinancialProfile {
   userId         String   @unique
   user           User     @relation(fields: [userId], references: [id])
   salaryMonthly  Decimal?
-  currentSavings Decimal?
-  targetAmount   Decimal?
+  currentSavings Decimal  @default(0)
+  targetAmount   Decimal  @default(1000000000)
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  debts       Debt[]
+  investments Investment[]
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  INVESTMENT
+}
+
+enum InvestmentType {
+  GOLD
+  STOCK
+  CRYPTO
+  REKSADANA
+  PROPERTY
+}
+
+enum InvestmentTransactionType {
+  BUY
+  SELL
+}
+
+model Category {
+  id       String          @id @default(uuid())
+  userId   String
+  user     User            @relation(fields: [userId], references: [id])
+  name     String
+  type     TransactionType
+  isSystem Boolean         @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions Transaction[]
+
+  @@unique([userId, name, type])
+}
+
+model Transaction {
+  id              String          @id @default(uuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  categoryId      String
+  category        Category        @relation(fields: [categoryId], references: [id])
+  type            TransactionType
+  amount          Decimal
+  note            String?
+  transactionDate DateTime        @db.Date
+
+  deletedAt       DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  debtPayments            DebtPayment[]
+  investmentTransactions  InvestmentTransaction[]
+
+  @@index([userId])
+  @@index([transactionDate])
+}
+
+model Debt {
+  id                 String   @id @default(uuid())
+  financialProfileId String
+  financialProfile   FinancialProfile @relation(fields: [financialProfileId], references: [id])
+  name               String
+  totalAmount        Decimal
+  interestRate       Decimal?
+  startDate          DateTime? @db.Date
+  dueDate            DateTime? @db.Date
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  payments DebtPayment[]
+}
+
+model DebtPayment {
+  id            String   @id @default(uuid())
+  debtId        String
+  debt          Debt     @relation(fields: [debtId], references: [id])
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  amount        Decimal
+  paymentDate   DateTime? @db.Date
+  note          String?
+
+  createdAt     DateTime @default(now())
+}
+
+model Investment {
+  id                 String         @id @default(uuid())
+  financialProfileId String
+  financialProfile   FinancialProfile @relation(fields: [financialProfileId], references: [id])
+  name               String
+  type               InvestmentType
+  symbol             String?
+
+  createdAt          DateTime @default(now())
+
+  investmentTransactions InvestmentTransaction[]
+  assetPrices            AssetPrice[]
+}
+
+model InvestmentTransaction {
+  id            String                   @id @default(uuid())
+  investmentId  String
+  investment    Investment               @relation(fields: [investmentId], references: [id])
+  transactionId String
+  transaction   Transaction              @relation(fields: [transactionId], references: [id])
+  type          InvestmentTransactionType
+  unit          Decimal
+  pricePerUnit  Decimal
+  totalValue    Decimal?
+  transactionDate DateTime?              @db.Date
+
+  createdAt     DateTime @default(now())
+}
+
+model AssetPrice {
+  id           String     @id @default(uuid())
+  investmentId String
+  investment   Investment @relation(fields: [investmentId], references: [id])
+  price        Decimal
+  recordedAt   DateTime   @default(now())
+}
+
+// ─── Subscription & Payment ────────────────────────────────────────────────
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  QRIS
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+model Subscription {
+  id        String             @id @default(uuid())
+  userId    String             @unique
+  user      User               @relation(fields: [userId], references: [id])
+  plan      SubscriptionPlan
+  status    SubscriptionStatus
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments  Payment[]
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  externalId     String?       @unique
+  amount         Decimal
+  currency       String        @default("IDR")
+  provider       String?
+  paymentMethod  PaymentMethod
+  status         PaymentStatus
+
+  qrUrl          String?
+  expiredAt      DateTime?
+  paidAt         DateTime?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }

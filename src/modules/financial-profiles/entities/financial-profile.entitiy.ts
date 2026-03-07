@@ -2,8 +2,8 @@ export class FinancialProfileEntity {
   id: string;
   userId: string;
   salaryMonthly: number | null;
-  currentSavings: number | null;
-  targetAmount: number | null;
+  currentSavings: number;
+  targetAmount: number;
   createdAt: Date;
   updatedAt: Date;
 
@@ -12,10 +12,8 @@ export class FinancialProfileEntity {
     this.userId = partial.userId as string;
     this.salaryMonthly =
       partial.salaryMonthly != null ? Number(partial.salaryMonthly) : null;
-    this.currentSavings =
-      partial.currentSavings != null ? Number(partial.currentSavings) : null;
-    this.targetAmount =
-      partial.targetAmount != null ? Number(partial.targetAmount) : null;
+    this.currentSavings = Number(partial.currentSavings ?? 0);
+    this.targetAmount = Number(partial.targetAmount ?? 1_000_000_000);
     this.createdAt = partial.createdAt as Date;
     this.updatedAt = partial.updatedAt as Date;
   }

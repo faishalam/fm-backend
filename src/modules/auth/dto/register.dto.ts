@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, MinLength, Matches } from 'class-validator';
 
 export class RegisterDto {
   @IsEmail()
@@ -7,10 +7,11 @@ export class RegisterDto {
   @IsNotEmpty()
   username: string;
 
+  @IsOptional()
   @Matches(/^08[0-9]{8,12}$/, {
     message: 'Phone number must be a valid Indonesian number',
   })
-  phoneNumber: string;
+  phoneNumber?: string;
 
   @MinLength(6)
   password: string;

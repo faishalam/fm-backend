@@ -5,16 +5,18 @@ export class UserEntity {
   id: string;
   email: string;
   username: string;
-  phoneNumber: string;
+  phoneNumber: string | null;
   avatar: string | null;
   role: string;
   isActive: boolean;
-  isSubscription: boolean;
   createdAt: Date;
   updatedAt: Date;
 
   @Exclude()
   password: string;
+
+  @Exclude()
+  deletedAt: Date | null;
 
   financialProfile?: FinancialProfileEntity | null;
 

@@ -40,7 +40,8 @@ export class UsersController {
     return this.usersService.updateUser(user.id, updateUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Get(':id')
   findUserById(@Param('id') id: string) {
     return this.usersService.findUserById(id);

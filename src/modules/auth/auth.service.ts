@@ -12,12 +12,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserEntity } from '../users/entities/user.entity';
+import { CategoriesService } from '../categories/categories.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   private async generateTokens(userId: string, email: string, role: string) {
@@ -25,7 +27,7 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET ?? 'secretKey',
-      expiresIn: '15m',
+      expiresIn: '60m',
     });
 
     const rawRefreshToken = uuidv4();
@@ -34,7 +36,7 @@ export class AuthService {
     expiresAt.setDate(expiresAt.getDate() + 7);
 
     await this.prisma.refreshToken.create({
-      data: { token: hashedRefreshToken, userId, expiresAt },
+      data: { tokenHash: hashedRefreshToken, userId, expiresAt },
     });
 
     return { accessToken, refreshToken: rawRefreshToken };
@@ -43,10 +45,13 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { email, username, password, phoneNumber } = registerDto;
 
+    const orConditions: Record<string, unknown>[] = [{ email }];
+    if (phoneNumber) {
+      orConditions.push({ phoneNumber });
+    }
+
     const existingUser = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ email }, { phoneNumber }],
-      },
+      where: { OR: orConditions },
     });
 
     if (existingUser) {
@@ -56,12 +61,19 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await this.prisma.user.create({
-      data: { email, username, phoneNumber, password: hashedPassword },
+      data: {
+        email,
+        username,
+        password: hashedPassword,
+        phoneNumber: phoneNumber ?? null,
+      },
     });
 
     await this.prisma.financialProfile.create({
       data: { userId: user.id },
     });
+
+    await this.categoriesService.seedDefaultCategories(user.id);
 
     return new UserEntity(user);
   }
@@ -73,7 +85,7 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) {
+    if (!user || !user.isActive || user.deletedAt) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
@@ -98,7 +110,7 @@ export class AuthService {
     let matchedToken: (typeof storedTokens)[number] | undefined;
 
     for (const stored of storedTokens) {
-      const isMatch = await bcrypt.compare(refreshToken, stored.token);
+      const isMatch = await bcrypt.compare(refreshToken, stored.tokenHash);
       if (isMatch) {
         matchedToken = stored;
         break;
@@ -127,7 +139,7 @@ export class AuthService {
     });
 
     for (const stored of storedTokens) {
-      const isMatch = await bcrypt.compare(refreshToken, stored.token);
+      const isMatch = await bcrypt.compare(refreshToken, stored.tokenHash);
       if (isMatch) {
         await this.prisma.refreshToken.update({
           where: { id: stored.id },

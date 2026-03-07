@@ -11,6 +11,7 @@ export class UsersService {
 
   async findAll() {
     const users = await this.prisma.user.findMany({
+      where: { deletedAt: null },
       include: this.includeProfile,
     });
     return users.map((user) => new UserEntity(user));
@@ -52,8 +53,17 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    await this.prisma.refreshToken.deleteMany({ where: { userId } });
-    await this.prisma.user.delete({ where: { id: userId } });
+    // Soft delete
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { deletedAt: new Date(), isActive: false },
+    });
+
+    // Revoke all refresh tokens
+    await this.prisma.refreshToken.updateMany({
+      where: { userId, isRevoked: false },
+      data: { isRevoked: true },
+    });
 
     return null;
   }
