@@ -55,9 +55,21 @@ async function main() {
   // perlu menambahkan nilai baru ke enum dan menjalankan migration terlebih dahulu.
 
   const categoryData = [
-    { name: 'Pengeluaran', type: 'EXPENSE' as const },
-    { name: 'Pemasukan', type: 'INCOME' as const },
+    { name: 'Gaji', type: 'INCOME' as const },
+    { name: 'Freelance', type: 'INCOME' as const },
+    { name: 'Bonus', type: 'INCOME' as const },
+    { name: 'Lainnya', type: 'INCOME' as const },
+    { name: 'Makanan', type: 'EXPENSE' as const },
+    { name: 'Transportasi', type: 'EXPENSE' as const },
+    { name: 'Belanja', type: 'EXPENSE' as const },
+    { name: 'Hiburan', type: 'EXPENSE' as const },
+    { name: 'Tagihan', type: 'EXPENSE' as const },
+    { name: 'Kesehatan', type: 'EXPENSE' as const },
+    { name: 'Pendidikan', type: 'EXPENSE' as const },
+    { name: 'Lainnya', type: 'EXPENSE' as const },
     { name: 'Investasi', type: 'INVESTMENT' as const },
+    { name: 'Penjualan Investasi', type: 'INCOME' as const },
+    { name: 'Bayar Hutang', type: 'EXPENSE' as const },
   ];
 
   // Seed kategori untuk kedua user

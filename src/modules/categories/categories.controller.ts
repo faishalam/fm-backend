@@ -21,26 +21,17 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(
-    @CurrentUser() user: { id: string },
-    @Body() dto: CreateCategoryDto,
-  ) {
+  create(@CurrentUser() user: { id: string }, @Body() dto: CreateCategoryDto) {
     return this.categoriesService.create(user.id, dto);
   }
 
   @Get()
-  findAll(
-    @CurrentUser() user: { id: string },
-    @Query('type') type?: string,
-  ) {
+  findAll(@CurrentUser() user: { id: string }, @Query('type') type?: string) {
     return this.categoriesService.findAll(user.id, type);
   }
 
   @Get(':id')
-  findOne(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  findOne(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.categoriesService.findOne(user.id, id);
   }
 
@@ -54,10 +45,7 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  remove(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  remove(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.categoriesService.remove(user.id, id);
   }
 }

@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -104,7 +100,11 @@ export class TransactionsService {
       include: this.includeCategory,
     });
 
-    if (!transaction || transaction.userId !== userId || transaction.deletedAt) {
+    if (
+      !transaction ||
+      transaction.userId !== userId ||
+      transaction.deletedAt
+    ) {
       throw new NotFoundException('Transaction not found');
     }
 
@@ -116,7 +116,11 @@ export class TransactionsService {
       where: { id },
     });
 
-    if (!transaction || transaction.userId !== userId || transaction.deletedAt) {
+    if (
+      !transaction ||
+      transaction.userId !== userId ||
+      transaction.deletedAt
+    ) {
       throw new NotFoundException('Transaction not found');
     }
 
@@ -135,7 +139,8 @@ export class TransactionsService {
     if (dto.type) data.type = dto.type;
     if (dto.amount !== undefined) data.amount = dto.amount;
     if (dto.note !== undefined) data.note = dto.note;
-    if (dto.transactionDate) data.transactionDate = new Date(dto.transactionDate);
+    if (dto.transactionDate)
+      data.transactionDate = new Date(dto.transactionDate);
 
     const updated = await this.prisma.transaction.update({
       where: { id },
@@ -151,7 +156,11 @@ export class TransactionsService {
       where: { id },
     });
 
-    if (!transaction || transaction.userId !== userId || transaction.deletedAt) {
+    if (
+      !transaction ||
+      transaction.userId !== userId ||
+      transaction.deletedAt
+    ) {
       throw new NotFoundException('Transaction not found');
     }
 

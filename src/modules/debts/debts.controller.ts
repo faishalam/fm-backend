@@ -21,10 +21,7 @@ export class DebtsController {
   constructor(private readonly debtsService: DebtsService) {}
 
   @Post()
-  create(
-    @CurrentUser() user: { id: string },
-    @Body() dto: CreateDebtDto,
-  ) {
+  create(@CurrentUser() user: { id: string }, @Body() dto: CreateDebtDto) {
     return this.debtsService.create(user.id, dto);
   }
 
@@ -34,10 +31,7 @@ export class DebtsController {
   }
 
   @Get(':id')
-  findOne(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  findOne(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.debtsService.findOne(user.id, id);
   }
 
@@ -51,10 +45,7 @@ export class DebtsController {
   }
 
   @Delete(':id')
-  remove(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  remove(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.debtsService.remove(user.id, id);
   }
 

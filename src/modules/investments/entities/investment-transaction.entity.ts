@@ -15,6 +15,8 @@ export class InvestmentTransactionEntity {
     this.pricePerUnit =
       partial.pricePerUnit != null ? Number(partial.pricePerUnit) : 0;
     this.totalValue =
-      partial.totalValue != null ? Number(partial.totalValue) : this.unit * this.pricePerUnit;
+      partial.totalValue != null
+        ? Number(partial.totalValue)
+        : this.unit * this.pricePerUnit;
   }
 }

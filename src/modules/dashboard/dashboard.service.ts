@@ -95,7 +95,10 @@ export class DashboardService {
       },
     });
 
-    const monthlyData: Record<string, { income: number; expense: number; investment: number }> = {};
+    const monthlyData: Record<
+      string,
+      { income: number; expense: number; investment: number }
+    > = {};
 
     for (const t of transactions) {
       const date = new Date(t.transactionDate);
@@ -122,7 +125,8 @@ export class DashboardService {
       months.reduce((sum, m) => sum + m.expense, 0) / monthCount;
     const avgMonthlyInvestment =
       months.reduce((sum, m) => sum + m.investment, 0) / monthCount;
-    const avgMonthlySaving = avgMonthlyIncome - avgMonthlyExpense - avgMonthlyInvestment;
+    const avgMonthlySaving =
+      avgMonthlyIncome - avgMonthlyExpense - avgMonthlyInvestment;
 
     const currentSavings = Number(profile.currentSavings ?? 0);
     const targetAmount = Number(profile.targetAmount ?? 1_000_000_000);
@@ -148,9 +152,8 @@ export class DashboardService {
       target: milestone,
       reached: currentSavings >= milestone,
       progress:
-        Math.round(
-          Math.min((currentSavings / milestone) * 100, 100) * 100,
-        ) / 100,
+        Math.round(Math.min((currentSavings / milestone) * 100, 100) * 100) /
+        100,
     }));
 
     return {
@@ -210,9 +213,7 @@ export class DashboardService {
     }
 
     if (expenseChange > 30) {
-      alerts.push(
-        `Pengeluaran naik ${expenseChange}% dibanding bulan lalu.`,
-      );
+      alerts.push(`Pengeluaran naik ${expenseChange}% dibanding bulan lalu.`);
     }
 
     if (currentMonth.savingsRate < 10 && currentMonth.totalIncome > 0) {
@@ -231,10 +232,7 @@ export class DashboardService {
     };
   }
 
-  async getWhatIfSimulation(
-    userId: string,
-    additionalMonthlySaving: number,
-  ) {
+  async getWhatIfSimulation(userId: string, additionalMonthlySaving: number) {
     const profile = await this.prisma.financialProfile.findUnique({
       where: { userId },
     });
@@ -254,7 +252,10 @@ export class DashboardService {
       },
     });
 
-    const monthlyData: Record<string, { income: number; expense: number; investment: number }> = {};
+    const monthlyData: Record<
+      string,
+      { income: number; expense: number; investment: number }
+    > = {};
 
     for (const t of transactions) {
       const date = new Date(t.transactionDate);
@@ -275,7 +276,10 @@ export class DashboardService {
     const months = Object.values(monthlyData);
     const monthCount = months.length || 1;
     const avgMonthlySaving =
-      months.reduce((sum, m) => sum + (m.income - m.expense - m.investment), 0) / monthCount;
+      months.reduce(
+        (sum, m) => sum + (m.income - m.expense - m.investment),
+        0,
+      ) / monthCount;
 
     const currentSavings = Number(profile.currentSavings ?? 0);
     const targetAmount = Number(profile.targetAmount ?? 1_000_000_000);
@@ -370,7 +374,7 @@ export class DashboardService {
     // Milestones
     const milestones = [
       10_000_000, 50_000_000, 100_000_000, 250_000_000, 500_000_000,
-      1_000_000_000,
+      750_000_000, 1_000_000_000,
     ];
 
     const milestoneProgress = milestones.map((milestone) => ({

@@ -21,7 +21,9 @@ export class CategoriesService {
     });
 
     if (existing) {
-      throw new ConflictException('Category with this name and type already exists');
+      throw new ConflictException(
+        'Category with this name and type already exists',
+      );
     }
 
     const category = await this.prisma.category.create({

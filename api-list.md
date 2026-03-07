@@ -63,3 +63,13 @@ GET     /dashboard/summary       ?year=&month=
 GET     /dashboard/forecast      (progress forecast + milestones)
 GET     /dashboard/what-if       ?additionalSaving=
 GET     /dashboard/net-worth     (Total Assets - Total Liabilities + milestones)
+
+SUBSCRIPTIONS
+GET     /subscriptions/plans                        (public: daftar paket + harga)
+POST    /subscriptions/webhook                      (public: Midtrans payment notification)
+POST    /subscriptions                              (user: pilih plan → generate QRIS via Midtrans)
+GET     /subscriptions/me                           (user: status subscription + sisa hari)
+GET     /subscriptions/payments                     (user: riwayat pembayaran)
+PATCH   /subscriptions/payments/:paymentId/cancel   (user: batalkan pembayaran PENDING)
+PATCH   /subscriptions/payments/:paymentId/confirm  (admin: konfirmasi pembayaran)
+GET     /subscriptions/admin/payments               (admin: semua pembayaran ?status=PENDING|PAID|...)

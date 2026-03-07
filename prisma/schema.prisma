@@ -185,8 +185,9 @@ model AssetPrice {
 // ─── Subscription & Payment ────────────────────────────────────────────────
 
 enum SubscriptionPlan {
-  FREE
-  PRO
+  THREE_MONTHS
+  SIX_MONTHS
+  ONE_YEAR
 }
 
 enum SubscriptionStatus {

@@ -42,10 +42,7 @@ export class InvestmentsController {
   }
 
   @Get(':id')
-  findOne(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  findOne(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.investmentsService.findOne(user.id, id);
   }
 
@@ -59,10 +56,7 @@ export class InvestmentsController {
   }
 
   @Delete(':id')
-  remove(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  remove(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.investmentsService.remove(user.id, id);
   }
 
@@ -97,11 +91,7 @@ export class InvestmentsController {
     @Param('id') investmentId: string,
     @Body() dto: CreateAssetPriceDto,
   ) {
-    return this.investmentsService.createAssetPrice(
-      user.id,
-      investmentId,
-      dto,
-    );
+    return this.investmentsService.createAssetPrice(user.id, investmentId, dto);
   }
 
   @Get(':id/prices')

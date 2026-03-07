@@ -49,10 +49,7 @@ export class TransactionsController {
   }
 
   @Get(':id')
-  findOne(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  findOne(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.transactionsService.findOne(user.id, id);
   }
 
@@ -66,10 +63,7 @@ export class TransactionsController {
   }
 
   @Delete(':id')
-  remove(
-    @CurrentUser() user: { id: string },
-    @Param('id') id: string,
-  ) {
+  remove(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.transactionsService.remove(user.id, id);
   }
 }

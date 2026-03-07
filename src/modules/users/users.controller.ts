@@ -40,6 +40,15 @@ export class UsersController {
     return this.usersService.updateUser(user.id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/photo')
+  updatePhoto(
+    @CurrentUser() user: { id: string },
+    @Body() body: { avatar: string },
+  ) {
+    return this.usersService.updateUser(user.id, { avatar: body.avatar });
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Get(':id')

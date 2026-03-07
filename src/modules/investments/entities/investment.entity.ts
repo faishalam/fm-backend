@@ -23,7 +23,10 @@ export class InvestmentEntity {
     }
 
     // Calculate current value from latest asset price
-    if (Array.isArray(partial.assetPrices) && (partial.assetPrices as unknown[]).length > 0) {
+    if (
+      Array.isArray(partial.assetPrices) &&
+      (partial.assetPrices as unknown[]).length > 0
+    ) {
       const prices = partial.assetPrices as Record<string, unknown>[];
       const latestPrice = Number(prices[0].price ?? 0);
       this.currentValue = this.totalUnits * latestPrice;
